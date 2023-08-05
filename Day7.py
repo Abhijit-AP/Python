@@ -1,35 +1,59 @@
-import pandas as pd
-import numpy as np
-from matplotlib import pyplot as plt
-from pandas.plotting import register_matplotlib_converters
-from matplotlib.backends.backend_pdf import PdfPages
-import seaborn as sns
-import datetime
-register_matplotlib_converters()
+import random
+import hangmanart as art
+import hangmanwords as words
 
-# Define date range
-date_rng = pd.date_range(start='1/1/2022', end='31/12/2022', freq='M')
+chosen_word = random.choice(words.word_list)
+print(chosen_word)
 
-# Generate random coffee sales data
-np.random.seed(0)
-sales_data = np.random.randint(500000,1000000,len(date_rng))
+guess_list = []
+for cw in chosen_word:
+    guess_list.append("-")
 
-# Create dataframe
-data = pd.DataFrame(date_rng, columns=['date'])
-data['Coffee Sales'] = sales_data
+# print(guess_list)
 
-# Create a line plot
-plt.figure(figsize=(12, 8))
-sns.lineplot(x='date', y='Coffee Sales', data=data)
-plt.title('Monthly Coffee Sales in the UK (2022)')
-plt.xlabel('Month')
-plt.ylabel('Sales (in units)')
+# for cw in range(0,len(chosen_word)):
+#    if chosen_word[cw] == guess:
+#        print("Right")
+#    else:
+#        print("Wrong")
 
-# Save the plot to a PDF file
-pdf_pages = PdfPages('D:\Coffee_Sales_UK_2022.pdf')
-pdf_pages.savefig(plt.gcf())
-pdf_pages.close()
+# Or You can also do this for forloop
+#for cw in chosen_word:
+#    if cw == guess:
+#        print("Right")
+#    else:
+#        print("Wrong")
 
-data.to_csv('D:\coffee_Sales_UK_2022.csv', index=False)
+print(art.logo)
 
-data.head()
+lives = 6
+guessed = ""
+while lives != 0:
+    guess = input("Guess a letter : ").lower()
+
+    if guess in guessed:
+        print(f"You have already guessed {guess}")
+
+    for cw in range(0,len(chosen_word)):
+        if chosen_word[cw] == guess:
+            guess_list[cw] = guess
+
+    if guess in chosen_word:
+        print(guess_list)
+        print(art.stages[lives])
+        guessed += guess
+
+    if guess not in chosen_word:
+        lives -= 1
+        print(f"You guessed {guess}, that's not in the word. You lose a life.")
+        print(guess_list)
+        print(art.stages[lives])
+
+        if lives == 0:
+            print("Game over!")
+            exit()
+
+    if "-" not in guess_list:
+        print("You Won!")
+        exit()
+
